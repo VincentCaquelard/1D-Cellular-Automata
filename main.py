@@ -12,8 +12,9 @@ parser.add_argument('-n', '--nb_of_iterations',default=300)
 parser.add_argument('-n_state', '--nb_of_states',default=3) 
 parser.add_argument('-r', '--rule',default="202112100110202000122012211") 
 parser.add_argument('-o', '--out',default="out.png") 
-parser.add_argument('-init', '--initial_state',default="2") 
+parser.add_argument('-init', '--initial_pattern',default="111") 
 parser.add_argument('--random_rule', action='store_true')
+parser.add_argument('--random_init', action='store_true')
 parser.add_argument('--border_mode', action='store_false')
 
 def get_random_rule(n_state):
@@ -34,13 +35,16 @@ def _get_config(neighbors):
 		res += pow(n_state,(l-1)-k)*neighbors[k]
 	return res
 
-def _get_world(init_pattern):
+def _get_first_it(init_pattern):
 	pt_len = len(init_pattern) # len of the init pattern
-	world = [0] * width
+	iteration = [0] * width
 	shift=(width//2)-pt_len
 	for k in range(pt_len):
-		world[shift+k]=int(init_pattern[k])
-	return world
+		iteration[shift+k]=int(init_pattern[k])
+	return iteration
+
+def _get_first_it_random():
+	return [random.randint(0,n_state-1) for x in range(width) ]
 
 args = parser.parse_args()
 # Define the dimensions of the image
@@ -56,9 +60,12 @@ else:
 if len(rule)!= pow(n_state,3):
 	sys.exit(f"Error: rule size: {len(rule)} incompatible with number of states: {n_state}")
 
-world= _get_world(args.initial_state)
+if args.random_init:
+	iteration = _get_first_it_random()
+else:
+	iteration= _get_first_it(args.initial_pattern)
 
-#===========SOME COOL 3-state rule===========
+#===========Interesting 3-state rule===========
 #rule= "012121121112210000222102010"
 #rule= "0210211111111120021021021021"
 #rule= "210211121000120021021221021"
@@ -68,40 +75,40 @@ world= _get_world(args.initial_state)
 #rule_4="202112100110222000000012211"
 #rule="202112100110202000122012211"
 
-#============SOME 4-state rules==============
+#============Interesting 4-state rules==============
 #->3321222303313302311032132200032220022133033331000103013121220322
 
-
-
+#============Interesting 5-state rules==============
+#->22034430420241013303413134443133020342123002043300402044002430223000232312212040334004314143113141101230123330324414034040414
+#->34234111124203400124400032322020004422402330114310113443322142020133014300012311300121231010403004032122044331002304321204220 Conway's Gol like behaviour O:
 
 loop_mode=args.border_mode
 
-timeline = world
-
-
+grid = iteration
 
 for i in range(nb_it):
-	#print(world)
-	world_p1=[0]*width
+	#print(iteration)
+	iteration_p1=[0]*width
 	if loop_mode:
 		for k in range(width):
-			neighbors=[world[(k-1)%width], world[k], world[(k+1)%width]]
+			neighbors=[iteration[(k-1)%width], iteration[k], iteration[(k+1)%width]]
 			c = _get_config(neighbors)
-			world_p1[k]=int(rule[(len(rule)-1)-c])
+			iteration_p1[k]=int(rule[(len(rule)-1)-c])
 	else:
 		for k in range(1,width-1):
-			neighbors=[world[k-1], world[k], world[k+1]]
+			neighbors=[iteration[k-1], iteration[k], iteration[k+1]]
 			c = _get_config(neighbors)
-			world_p1[k]=int(rule[(len(rule)-1)-c])
+			iteration_p1[k]=int(rule[(len(rule)-1)-c])
 
 	
-	world=world_p1
-	timeline.extend(world)
+	iteration=iteration_p1
+	grid.extend(iteration)
 
 color_palette = rand_palette()
 palette = sns.color_palette(color_palette, n_state)
+
 # Define the grid of pixel values (in this example, just a diagonal line)
-pixels = [tuple(int(c * 255) for c in palette[x]) for x in timeline]
+pixels = [tuple(int(c * 255) for c in palette[x]) for x in grid]
 
 # Create a new image with the specified dimensions and pixel values
 img = Image.new('RGB', (width, nb_it+1))
