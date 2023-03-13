@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "1d-cellular-automata"
+version = "0.1.0"
+description = "Python implementation of 1D cellular automata"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "1d_cellular_automata"}]
+
+[tool.poetry.dependencies]
+python = "3.10.6"
+seaborn = "^0.12.2"
+Pillow = "^9.4.0"
+
+[tool.poetry.scripts]
+wf = 'main'
+
+[tool.poetry.group.dev.dependencies]
+seaborn = "^0.12.2"
+Pillow = "^9.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
