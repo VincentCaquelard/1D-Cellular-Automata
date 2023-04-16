@@ -15,7 +15,6 @@ parser.add_argument('-o', '--out',default="out.png")
 parser.add_argument('-init', '--initial_pattern',default="111") 
 parser.add_argument('--random_rule', action='store_true')
 parser.add_argument('--random_init', action='store_true')
-parser.add_argument('--border_mode', action='store_false')
 
 def get_random_rule(n_state):
 	rule=""
@@ -65,40 +64,17 @@ if args.random_init:
 else:
 	iteration= _get_first_it(args.initial_pattern)
 
-#===========Interesting 3-state rule===========
-#rule= "012121121112210000222102010"
-#rule= "0210211111111120021021021021"
-#rule= "210211121000120021021221021"
-#rule_spaghetti= "110211121001120021021221002"
-#rule_cool="110211121001120021021201002"
-#rule="220211121001120021021201002"
-#rule_4="202112100110222000000012211"
-#rule="202112100110202000122012211"
 
-#============Interesting 4-state rules==============
-#->3321222303313302311032132200032220022133033331000103013121220322
-
-#============Interesting 5-state rules==============
-#->22034430420241013303413134443133020342123002043300402044002430223000232312212040334004314143113141101230123330324414034040414
-#->34234111124203400124400032322020004422402330114310113443322142020133014300012311300121231010403004032122044331002304321204220 Conway's Gol like behaviour O:
-
-loop_mode=args.border_mode
 
 grid = iteration
 
 for i in range(nb_it):
 	#print(iteration)
 	iteration_p1=[0]*width
-	if loop_mode:
-		for k in range(width):
-			neighbors=[iteration[(k-1)%width], iteration[k], iteration[(k+1)%width]]
-			c = _get_config(neighbors)
-			iteration_p1[k]=int(rule[(len(rule)-1)-c])
-	else:
-		for k in range(1,width-1):
-			neighbors=[iteration[k-1], iteration[k], iteration[k+1]]
-			c = _get_config(neighbors)
-			iteration_p1[k]=int(rule[(len(rule)-1)-c])
+	for k in range(width):
+		neighbors=[iteration[(k-1)%width], iteration[k], iteration[(k+1)%width]]
+		c = _get_config(neighbors)
+		iteration_p1[k]=int(rule[(len(rule)-1)-c])
 
 	
 	iteration=iteration_p1
