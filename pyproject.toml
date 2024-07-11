@@ -7,9 +7,10 @@ readme = "README.md"
 packages = [{include = "1d_cellular_automata"}]
 
 [tool.poetry.dependencies]
-python = "3.10.6"
+python = "3.10.12"
 seaborn = "^0.12.2"
 Pillow = "^9.4.0"
+numba = "^0.56.4"
 
 [tool.poetry.scripts]
 wf = 'main'
